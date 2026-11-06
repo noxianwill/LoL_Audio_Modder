@@ -40,7 +40,9 @@ It provides an interactive, dark-themed GUI and a high-performance binary proces
 
 - **Full Wwise & Riot Container Support**: Native binary parsing and deterministic rebuilding of `.bnk` (SoundBank), `.wpk` (r3d2 audio package), and `map.bin` (PROP string dictionary) files.
 - **Deep Hierarchy Reconstruction**: Reconstructs complete logical audio graphs from raw binary HIRC data:
-  $$\text{Event} \longrightarrow \text{Action} \longrightarrow \text{Container / Blend / Music Track} \longrightarrow \text{Sound Object} \longrightarrow \text{WEM}$$
+  ```text
+  Event ➔ Action ➔ Container / Blend / Music Track ➔ Sound Object ➔ WEM
+  ```
 - **Interactive Audio Previewer**: Real-time decoding of proprietary game `.wem` audio files via bundled `vgmstream` integration, playable instantly using `pygame-ce` or native OS fallbacks.
 - **Non-Destructive In-Memory Editing**:
   - **Replace Audio**: Swap out audio payloads while automatically recalculating sizes, offsets, and Wwise codec plugin identifiers.
@@ -191,7 +193,7 @@ python main.py "path/to/character_sfx_events.bnk" "path/to/character_sfx_audio.w
 ### 2. Replacing Existing Sounds
 
 1. Locate the Sound node you want to modify in the hierarchy.
-2. Click **Replace Audio** on the toolbar (or right-click $\rightarrow$ **Replace Audio**).
+2. Click **Replace Audio** on the toolbar (or right-click → **Replace Audio**).
 3. Select your custom `.wem` file.
    - *If selecting a `.wav` or `.ogg`, LAM will display a compatibility warning explaining that the game requires Wwise-encoded WEMs.*
 4. The sound's payload and byte length update in memory, and the node is highlighted with a green indicator.
@@ -285,13 +287,18 @@ LAM preserves raw binary payloads for every object. When modifications are made,
 Wwise uses two primary hashing strategies to identify resources:
 
 1. **FNV-1 32-Bit Hash** (used for SoundBanks, Events, and Game Syncs):
-   $$\text{hash} = \text{OffsetBasis} \times \text{Prime} \pmod{2^{32}}$$
+   ```text
+   hash = (OffsetBasis * Prime) % (2^32)
+   ```
    *Normalized to lowercase, forward-slashes, and stripped of whitespace before hashing.*
 
 2. **Mixed-Endian 30-Bit GUID Hash** (used for Sound SFX, Audio Buses, and WEM ShortIDs):
    - Parses standard GUID `{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}`.
    - Reorders `Data1` (4B LE), `Data2` (2B LE), and `Data3` (2B LE) into big-endian byte sequences while preserving `Data4` (8B BE).
-   - Computes FNV-1 over the 16-byte reordered structure, masked to 30 bits: $\text{hash} \ \& \ \text{0x3FFFFFFF}$.
+   - Computes FNV-1 over the 16-byte reordered structure, masked to 30 bits:
+     ```text
+     hash = FNV1_32(reordered_bytes) & 0x3FFFFFFF
+     ```
 
 ---
 
