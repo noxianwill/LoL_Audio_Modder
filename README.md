@@ -134,7 +134,7 @@ LoL Audio Editor/
 Clone the repository and install the required Python dependencies:
 
 ```bash
-git clone https://github.com/your-username/league-audio-modder.git
+git clone https://github.com/noxianwill/lol_audio_modder.git
 cd "league-audio-modder"
 
 # Create a virtual environment (optional but recommended)
